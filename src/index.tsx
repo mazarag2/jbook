@@ -9,9 +9,18 @@ const App = () => {
     const [code,setCode] = useState('');
 
     const ref = useRef<any>()
-    const onClick = () => {
+    const onClick = async () => {
         console.log(input)
+        if(!ref.current){
+            return ;
+        }
         setCode(input)
+        const result = await ref.current.transform(input,{
+            loader : 'jsx',
+            target: 'es2015'
+        });
+        setCode(result.code)
+
     }
 
     const startService = async () => {
@@ -23,9 +32,7 @@ const App = () => {
     }
 
     useEffect(() => {
-        if(!ref.current){
-            return ;
-        }
+
         startService();
 
     },[])
@@ -33,7 +40,7 @@ const App = () => {
     <div>
         <textarea value={input} onChange={(e) => setInput(e.target.value)}></textarea> 
         <button onClick={onClick}>Submit</button>
-        <h1>hello there</h1>;
+        <h1>hello there</h1>
         <pre>{code}</pre>
     </div>
     )
