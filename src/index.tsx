@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom';
 import { useState } from 'react';
 import * as esbuild from 'esbuild-wasm';
 import { useEffect ,useRef} from 'react';
+import { unpkgPathPlugin } from './plugins/unpkg-path-plugin';
 
 const App = () => {
 
@@ -15,10 +16,24 @@ const App = () => {
             return ;
         }
         setCode(input)
+        const result = await ref.current.build({
+            entryPoints : ['index.js'],
+            bundle: true,
+            write: false,
+            plugins: [unpkgPathPlugin()],
+            define: {
+                'process.env.NODE_ENV': '"production"',
+                global: 'window',
+            },
+
+        })
+        /*
         const result = await ref.current.transform(input,{
             loader : 'jsx',
             target: 'es2015'
         });
+        */
+       console.log(result);
         setCode(result.code)
 
     }
